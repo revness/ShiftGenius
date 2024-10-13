@@ -1,0 +1,81 @@
+$form-padding: 20px;
+$form-border-radius: 5px;
+$input-padding: 12px;
+$input-border-radius: 5px;
+$input-border: 1px solid #d1cfcf;
+$input-background: #ededed;
+$button-background: #1fbd47;
+$button-color: #fff;
+$error-color: #ff0000;
+
+.signUpPage {
+  margin-top: 5rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  .form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: $form-padding;
+    border-radius: $form-border-radius;
+    // background-color: #f9f9f9;
+    font-size: large;
+
+    .field {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: $input-padding;
+        border: $input-border;
+        border-radius: $input-border-radius;
+        box-sizing: border-box;
+        background-color: $input-background;
+      }
+
+      small {
+        display: block;
+        margin-top: 5px;
+        color: $error-color;
+      }
+    }
+
+    button {
+      width: 100%;
+      padding: $input-padding;
+      background-color: $button-background;
+      color: $button-color;
+      border: none;
+      border-radius: $input-border-radius;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($button-background, 10%);
+      }
+    }
+  }
+
+  .signUpField {
+    text-align: center;
+    margin-top: 20px;
+    font-size: large;
+
+    span {
+      margin-right: 10px;
+    }
+
+    a {
+      color: $button-background;
+      text-decoration: none;
+      font-weight: bold;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
