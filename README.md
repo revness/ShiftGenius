@@ -5,7 +5,7 @@ Built by Jenny and Chapman.
 
 # ERD
 
-![image](https://github.com/user-attachments/assets/c7edab67-2f1a-428a-ba33-f229f3bba77c)
+![image](https://github.com/user-attachments/assets/2411aeb0-1b3b-4abe-8fcc-e532890b4cc7)
 
 
 # Changelog
