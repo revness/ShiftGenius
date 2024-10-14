@@ -3,8 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Import the schema and interface
 import styles from "./SignUp.module.scss";
 import { Link, useNavigate } from "react-router-dom";
+import { signUp } from "../../services/shift";
 
-interface SignUpFormInputs {
+export interface SignUpFormInputs {
   username: string;
   email: string;
   password: string;
@@ -28,25 +29,8 @@ const SignUp = () => {
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const result = await res.json();
-
-      if (result.success === false) {
-        if (result.message === "The username has been taken") {
-          setError("username", {
-            type: "manual",
-            message: result.message,
-          });
-          console.log(result.message);
-          console.log(result);
-        }
-      }
-
-      if (res.ok) {
+      const res = await signUp(data);
+      if (res) {
         navigate("/sign-in");
       }
     } catch (error) {

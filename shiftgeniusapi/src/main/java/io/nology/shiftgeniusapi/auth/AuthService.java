@@ -26,8 +26,7 @@ public class AuthService {
     }
 
     public AuthResponse register(AuthRegisterDTO data) {
-        User user = new User(data.getFirstName(),
-                data.getLastName(),
+        User user = new User(data.getUserName(),
                 data.getEmail(),
                 passwordEncoder.encode(data.getPassword()));
 

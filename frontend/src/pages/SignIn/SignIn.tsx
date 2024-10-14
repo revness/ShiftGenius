@@ -3,8 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
 import styles from "./SignIn.module.scss";
 import { Link, useNavigate } from "react-router-dom";
+import { logIn } from "../../services/shift";
 
-interface SignInFormInputs {
+export interface SignInFormInputs {
   email: string;
   password: string;
 }
@@ -26,32 +27,8 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<SignInFormInputs> = async (data) => {
     try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const result = await res.json();
-
-      if (result.success === false) {
-        if (result.message === "User not found") {
-          setError("email", {
-            type: "manual",
-            message: result.message,
-          });
-        }
-        if (result.message === "Invalid password") {
-          setError("password", {
-            type: "manual",
-            message: result.message,
-          });
-        }
-      }
-
-      if (res.ok) {
-        // Update authentication state
-        localStorage.setItem("access_token", result.token);
-        // You may want to add a state management or redirect logic here
+      const res = await logIn(data);
+      if (res) {
         navigate("/");
       }
     } catch (error) {
