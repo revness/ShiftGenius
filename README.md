@@ -7,6 +7,10 @@ Built by Jenny and Chapman.
 
 ![image](https://github.com/user-attachments/assets/2411aeb0-1b3b-4abe-8fcc-e532890b4cc7)
 
+# Tech Stack
+
+![image](./assets/stack.png)
+
 
 # Changelog
 - 10-10-24: 
