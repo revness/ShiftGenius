@@ -21,3 +21,5 @@ Built by Jenny and Chapman.
     - Set up boilerplate for front and backend.
     
 
+# Todo
+- Change to color icons or images for tech stack
