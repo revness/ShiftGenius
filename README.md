@@ -12,6 +12,7 @@ Built by Jenny and Chapman.
 
 <!-- ![image](./assets/stack.png) -->
 
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
  <img src="/frontend/public/tech/git.png" alt="Git" width="100">
 
  <img src="/frontend/public/tech/java.png" alt="Java" width="100">
@@ -25,18 +26,20 @@ Built by Jenny and Chapman.
  <img src="/frontend/public/tech/typescript.png" alt="TypeScript" width="100">
 
  <img src="/frontend/public/tech/aws.png" alt="AWS" width="100">
+ </div>
 
 # Changelog
 
-- 10-10-24: 
-    - Discuss features for MVP.
-    - Database schema
-    - Set up ticketing board for project management.
-    - Set up GitHub repo
-    - Set up boilerplate for front and backend.
-- 15-10-24 
-    - Adds authentication to backend and Login/Signup pages to frontend.
-    
+- 10-10-24:
+  - Discuss features for MVP.
+  - Database schema
+  - Set up ticketing board for project management.
+  - Set up GitHub repo
+  - Set up boilerplate for front and backend.
+- 14-10-24
+  - Add authentication to backend and Login/Signup pages to frontend.
+- 15-10-24
+  - Add tailwind css to Login/Signup pages to frontend, update readme.md
 
 # Todo
 
