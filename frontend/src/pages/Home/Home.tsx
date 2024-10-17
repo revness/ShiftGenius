@@ -3,6 +3,7 @@ import styles from "./Home.module.scss";
 const Home = () => {
   return (
     <div className={styles.homePage}>
+      Build with:
       <div className="flex flex-wrap gap-1">
         <svg
           role="img"

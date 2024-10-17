@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
 import { Link, useNavigate } from "react-router-dom";
 import { logIn } from "../../services/shift";
+import { useState } from "react";
 
 export interface SignInFormInputs {
   email: string;
@@ -10,6 +11,7 @@ export interface SignInFormInputs {
 }
 
 const SignIn = () => {
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -26,17 +28,21 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<SignInFormInputs> = async (data) => {
     try {
+      setError(null);
       const res = await logIn(data);
       if (res) {
         navigate("/");
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);
+      setError("Failed to login");
     }
   };
 
   return (
     <div className="mt-20 font-cambria">
+      <h1 className="text-center text-3xl font-bold">Sign In</h1>
+      {error && <div className="text-red-500 text-center">{error}</div>}
       <form
         className="max-w-md mx-auto p-5 text-lg"
         onSubmit={handleSubmit(onSubmit)}
