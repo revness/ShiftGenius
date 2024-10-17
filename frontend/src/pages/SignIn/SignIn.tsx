@@ -80,7 +80,7 @@ const SignIn = () => {
         <div className="mb-5">
           <button
             type="submit"
-            className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600"
+            className="w-full p-3 bg-pink-500 text-white rounded-md hover:bg-pink-600"
           >
             Sign In
           </button>
@@ -88,10 +88,7 @@ const SignIn = () => {
       </form>
       <div className="text-center mt-5 text-lg">
         <span className="mr-2">Don't have an account?</span>
-        <Link
-          to="/sign-up"
-          className="text-green-500 font-bold hover:underline"
-        >
+        <Link to="/sign-up" className="text-pink-500 font-bold hover:underline">
           Sign Up
         </Link>
       </div>
