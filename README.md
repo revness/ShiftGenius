@@ -49,6 +49,7 @@ Team member : Chapman, Jenny
 - 17-10-24
   - Discuss main feature and UI. Assign tickets
   - Add profile endpoint CRU operations.
+  - Add profile form UI on Frontend.
 
 # Todo
 
