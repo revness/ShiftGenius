@@ -50,6 +50,16 @@ public class User implements UserDetails {
     @Column
     private String position; // Receptionist, Manager, etc.
 
+    @Getter
+    @Setter
+    @Column
+    private String department; // nursing, management, etc.
+
+    @Getter
+    @Setter
+    @Column
+    private String phone;
+
     public User() {
     }
 
@@ -67,7 +77,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.email;
     }
 
     @Override

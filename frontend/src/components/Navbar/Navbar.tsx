@@ -31,9 +31,9 @@ const Navbar = () => {
             ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
             : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
         }
-        to="/sign-in"
+        to="/profile"
       >
-        Sign-in
+        Profile
       </NavLink>
 
       <NavLink
@@ -42,10 +42,21 @@ const Navbar = () => {
             ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
             : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
         }
+        to="/sign-in"
+      >
+        Sign-in
+      </NavLink>
+
+      {/* <NavLink
+        className={({ isActive }) =>
+          isActive
+            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+        }
         to="/sign-up"
       >
         Sign-up
-      </NavLink>
+      </NavLink> */}
     </nav>
   );
 };
