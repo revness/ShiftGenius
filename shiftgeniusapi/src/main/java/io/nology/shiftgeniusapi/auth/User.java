@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,11 +12,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
 import java.util.Collection;
+import java.util.Set;
+import io.nology.shiftgeniusapi.timesheet.Timesheet;
 
 @Entity
 @Table(name = "users")
@@ -50,6 +54,9 @@ public class User implements UserDetails {
     @Column
     private String position; // Receptionist, Manager, etc.
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Timesheet> timesheets;
+
     public User() {
     }
 
@@ -67,7 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.email;
     }
 
     @Override
