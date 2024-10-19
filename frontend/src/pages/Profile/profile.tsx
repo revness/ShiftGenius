@@ -44,8 +44,8 @@ const ProfileForm = () => {
 
   return (
     <div className="relative flex items-center justify-center p-4 font-cambria">
-      {/* Update Profile Heading */}
-      <h1 className="absolute top-[30px] left-[360px] text-7xl font-semibold mb-6 z-50">
+      {/* Profile Heading */}
+      <h1 className="absolute top-10 left-21 text-7xl font-semibold mb-6 z-50">
         Profile
       </h1>
 
