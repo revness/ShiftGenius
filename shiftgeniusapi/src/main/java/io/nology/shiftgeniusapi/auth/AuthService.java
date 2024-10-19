@@ -32,7 +32,7 @@ public class AuthService {
 
         userRepository.save(user);
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token, user.getUsername(), user.getEmail());
+        return new AuthResponse(token, user.getUserName(), user.getEmail());
 
     }
 
