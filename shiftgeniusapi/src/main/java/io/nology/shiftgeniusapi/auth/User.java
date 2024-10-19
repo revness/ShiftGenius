@@ -80,6 +80,10 @@ public class User implements UserDetails {
         return this.email;
     }
 
+    public String getUserName() {
+        return this.userName;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
