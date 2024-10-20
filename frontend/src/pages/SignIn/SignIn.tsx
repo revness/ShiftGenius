@@ -3,7 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
 import { Link, useNavigate } from "react-router-dom";
 import { logIn } from "../../services/shift";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../context/UserContextProvider";
 
 export interface SignInFormInputs {
   email: string;
@@ -13,6 +14,15 @@ export interface SignInFormInputs {
 const SignIn = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
+
+  //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
+  if (!userContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+
+  const { setUser } = userContext;
+
   const {
     handleSubmit,
     formState: { isSubmitSuccessful, errors },
@@ -31,6 +41,10 @@ const SignIn = () => {
       setError(null);
       const res = await logIn(data);
       if (res) {
+        setUser({
+          userName: res.userName,
+          email: res.email,
+        });
         navigate("/");
       }
     } catch (error) {
@@ -80,7 +94,7 @@ const SignIn = () => {
         <div className="mb-5">
           <button
             type="submit"
-            className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600"
+            className="w-full p-3 bg-pink-500 text-white rounded-md hover:bg-pink-600"
           >
             Sign In
           </button>
@@ -88,10 +102,7 @@ const SignIn = () => {
       </form>
       <div className="text-center mt-5 text-lg">
         <span className="mr-2">Don't have an account?</span>
-        <Link
-          to="/sign-up"
-          className="text-green-500 font-bold hover:underline"
-        >
+        <Link to="/sign-up" className="text-pink-500 font-bold hover:underline">
           Sign Up
         </Link>
       </div>

@@ -6,6 +6,8 @@ const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
 export interface User {
   token: string;
+  userName: string;
+  email: string;
 }
 
 export const signUp = async (data: SignUpFormInputs) => {
@@ -15,7 +17,7 @@ export const signUp = async (data: SignUpFormInputs) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
+    console.log("signup", response.data);
     return response.data as User;
   } catch (error) {
     throw new Error("Failed to register");
@@ -29,7 +31,9 @@ export const logIn = async (data: SignInFormInputs) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
+    console.log("login", response.data);
+    const { token, userName, email } = response.data;
+    return { token, userName, email };
     return response.data as User;
   } catch (error) {
     throw new Error("Failed to login");

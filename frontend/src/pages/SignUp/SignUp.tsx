@@ -115,7 +115,7 @@ const SignUp = () => {
         <div className="mb-5">
           <button
             type="submit"
-            className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600"
+            className="w-full p-3 bg-pink-500 text-white rounded-md hover:bg-pink-600"
           >
             Sign Up
           </button>
@@ -124,10 +124,7 @@ const SignUp = () => {
 
       <div className="text-center mt-5 text-lg">
         <span className="mr-2">Have an account?</span>
-        <Link
-          to="/sign-in"
-          className="text-green-500 font-bold hover:underline"
-        >
+        <Link to="/sign-in" className="text-pink-500 font-bold hover:underline">
           Sign In
         </Link>
       </div>

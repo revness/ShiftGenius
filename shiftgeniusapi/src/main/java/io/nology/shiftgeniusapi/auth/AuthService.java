@@ -32,21 +32,28 @@ public class AuthService {
 
         userRepository.save(user);
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        return new AuthResponse(token, user.getUserName(), user.getEmail());
 
     }
 
     public AuthResponse login(AuthLoginDTO data) throws NotFoundException {
-
+        // Authenticate the user with email and password
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                data.getEmail(),
+                data.getEmail(), // Using email for authentication
                 data.getPassword());
 
         authManager.authenticate(token);
 
+        // Find the user by email
         User user = userRepository.findByEmail(data.getEmail()).orElseThrow(
                 () -> new NotFoundException("Incorrect login details"));
+
+        // Generate the JWT token
         String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+
+        // Return the JWT token, userName (from user.getUserName()), and email (from
+        // user.getEmail())
+        return new AuthResponse(jwtToken, user.getUserName(), user.getEmail());
     }
+
 }

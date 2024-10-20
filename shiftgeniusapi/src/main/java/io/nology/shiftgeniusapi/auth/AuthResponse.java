@@ -9,11 +9,21 @@ public class AuthResponse {
     @Setter
     private String token;
 
+    @Getter
+    @Setter
+    private String userName;
+
+    @Getter
+    @Setter
+    private String email;
+
     public AuthResponse() {
     }
 
-    public AuthResponse(String token) {
+    public AuthResponse(String token, String userName, String email) {
         this.token = token;
+        this.userName = userName;
+        this.email = email;
     }
 
 }

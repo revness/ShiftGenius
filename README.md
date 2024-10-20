@@ -28,7 +28,13 @@ Built by Jenny and Chapman.
  <img src="/frontend/public/tech/aws.png" alt="AWS" width="100">
  </div>
 
+# Agile method
+
+![image](frontend/public/gitTicketBoard.jpg)
+
 # Changelog
+
+Team member : Chapman, Jenny
 
 - 10-10-24:
   - Discuss features for MVP.
@@ -37,9 +43,13 @@ Built by Jenny and Chapman.
   - Set up GitHub repo
   - Set up boilerplate for front and backend.
 - 14-10-24
-  - Add authentication to backend and Login/Signup pages to frontend.
+  - Pair programming to add authentication to backend and Login/Signup pages to frontend.
 - 15-10-24
   - Add tailwind css to Login/Signup pages to frontend, update readme.md
+- 17-10-24
+  - Discuss main feature and UI. Assign tickets
+  - Add profile endpoint CRU operations.
+  - Add profile form UI on Frontend,update readme.md
 
 # Todo
 
