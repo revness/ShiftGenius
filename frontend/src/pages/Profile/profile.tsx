@@ -1,7 +1,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../context/UserContextProvider";
 
 export interface ProfileFormInputs {
   username: string;
@@ -14,6 +15,14 @@ export interface ProfileFormInputs {
 const ProfileForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+
+  const { user } = userContext;
 
   const {
     handleSubmit,
@@ -70,12 +79,14 @@ const ProfileForm = () => {
               Username
             </label>
             <input
+              value={user?.userName || ""}
               id="username"
               type="text"
               {...register("username")}
               className={`w-1/4 px-3 py-1 border-b-2 ${
                 errors.username ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
+              disabled
             />
           </div>
 
@@ -85,13 +96,14 @@ const ProfileForm = () => {
               Email
             </label>
             <input
+              value={user?.email || ""}
               id="email"
               type="email"
               {...register("email")}
               className={`w-2/5 px-3 py-1 border-b-2 ${
                 errors.username ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
-              placeholder="Enter your email"
+              disabled
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">

@@ -3,7 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
 import { Link, useNavigate } from "react-router-dom";
 import { logIn } from "../../services/shift";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../context/UserContextProvider";
 
 export interface SignInFormInputs {
   email: string;
@@ -13,6 +14,15 @@ export interface SignInFormInputs {
 const SignIn = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
+
+  //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
+  if (!userContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+
+  const { setUser } = userContext;
+
   const {
     handleSubmit,
     formState: { isSubmitSuccessful, errors },
@@ -31,6 +41,10 @@ const SignIn = () => {
       setError(null);
       const res = await logIn(data);
       if (res) {
+        setUser({
+          userName: res.userName,
+          email: res.email,
+        });
         navigate("/");
       }
     } catch (error) {
