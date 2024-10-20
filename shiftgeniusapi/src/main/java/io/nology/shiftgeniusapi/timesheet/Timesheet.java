@@ -12,11 +12,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import io.nology.shiftgeniusapi.auth.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "timesheets")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Timesheet {
 
     @Id
@@ -37,6 +41,11 @@ public class Timesheet {
     @Setter
     @Column(nullable = false)
     private LocalTime endTime;
+
+    @Getter
+    @Setter
+    @Column(nullable = false)
+    private LocalTime breakTime;
 
     @Getter
     @Setter
