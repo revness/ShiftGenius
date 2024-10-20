@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -21,34 +22,26 @@ import lombok.Setter;
 @Table(name = "timesheets")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Timesheet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
     @Column(nullable = false)
     private LocalDate date;
 
-    @Getter
-    @Setter
     @Column(nullable = false)
     private LocalTime startTime;
 
-    @Getter
-    @Setter
     @Column(nullable = false)
     private LocalTime endTime;
 
-    @Getter
-    @Setter
     @Column(nullable = false)
     private LocalTime breakTime;
 
-    @Getter
-    @Setter
     private String description;
 
     @ManyToOne
