@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/greetings")
 public class GreetingController {
 
-    @GetMapping
+    @GetMapping("/protected")
     public ResponseEntity<String> sayHello() {
         return new ResponseEntity<String>("Hello from a protected endpoint",
                 HttpStatus.OK);
