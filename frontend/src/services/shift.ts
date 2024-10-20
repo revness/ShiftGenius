@@ -6,6 +6,8 @@ const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
 export interface User {
   token: string;
+  userName: string;
+  email: string;
 }
 
 export const signUp = async (data: SignUpFormInputs) => {
