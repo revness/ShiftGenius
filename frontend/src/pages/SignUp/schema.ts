@@ -2,7 +2,7 @@ import * as z from "zod";
 
 const schema = z
   .object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
+    userName: z.string().min(3, "Username must be at least 3 characters"),
     email: z.string().email("Email must be a valid email address"),
     password: z
       .string()

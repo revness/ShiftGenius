@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import io.nology.shiftgeniusapi.auth.User;
 
-public class UserResponseDTO {
+public class UserResponse {
   @Getter
   @Setter
   private Long id;
@@ -37,11 +37,11 @@ public class UserResponseDTO {
   private String username;
 
   // Default Constructor
-  public UserResponseDTO() {
+  public UserResponse() {
   }
 
   // Constructor to initialize from User entity
-  public UserResponseDTO(User user) {
+  public UserResponse(User user) {
     this.id = user.getId();
     this.email = user.getEmail();
     this.position = user.getPosition();
@@ -50,6 +50,6 @@ public class UserResponseDTO {
     this.authorities = user.getAuthorities().stream()
         .map(auth -> auth.getAuthority())
         .collect(Collectors.toList());
-    this.username = user.getUsername();
+    this.username = user.getUserName();
   }
 }

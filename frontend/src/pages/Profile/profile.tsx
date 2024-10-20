@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import schema from "./schema"; // Assuming the schema is in TypeScript
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContextProvider";
+import { addProfile } from "../../services/shift";
+import { useNavigate } from "react-router-dom";
 
 export interface ProfileFormInputs {
   username: string;
@@ -13,11 +15,13 @@ export interface ProfileFormInputs {
 }
 
 const ProfileForm = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const userContext = useContext(UserContext);
 
+  //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
   if (!userContext) {
     throw new Error("useContext must be used within a UserProvider");
   }
@@ -33,6 +37,8 @@ const ProfileForm = () => {
     resolver: zodResolver(schema),
   });
 
+  // console.log(errors);
+
   if (isSubmitSuccessful) {
     reset();
   }
@@ -41,13 +47,15 @@ const ProfileForm = () => {
     try {
       setError(null);
       setSuccess(null);
-      // const res = await logIn(data);
-      // if (res) {
-      //   navigate("/");
-      // }
+      const res = await addProfile(data);
+      if (res) {
+        setSuccess("Profile updated successfully!");
+        navigate("/profile");
+      }
+      console.log("addProfile response", res); // Log the response
     } catch (error) {
       console.error("An unexpected error occurred:", error);
-      setError("Failed to login");
+      setError("Failed to update profile");
     }
   };
 
@@ -73,16 +81,15 @@ const ProfileForm = () => {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="relative">
-          {/* Username Field */}
+          {/* Username Field  (read only) */}
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700 mb-2">
               Username
             </label>
             <input
-              value={user?.userName || ""}
+              defaultValue={user?.userName || ""}
               id="username"
               type="text"
-              {...register("username")}
               className={`w-1/4 px-3 py-1 border-b-2 ${
                 errors.username ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
@@ -90,16 +97,15 @@ const ProfileForm = () => {
             />
           </div>
 
-          {/* Email Field */}
+          {/* Email Field (read only)*/}
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">
               Email
             </label>
             <input
-              value={user?.email || ""}
+              defaultValue={user?.email || ""}
               id="email"
               type="email"
-              {...register("email")}
               className={`w-2/5 px-3 py-1 border-b-2 ${
                 errors.username ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
@@ -122,7 +128,7 @@ const ProfileForm = () => {
               type="text"
               {...register("position")}
               className={`w-1/4 px-3 py-1 border-b-2 ${
-                errors.username ? "border-b-red-500" : "border-b-gray-300"
+                errors.position ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
               placeholder="Enter your position"
             />
@@ -143,7 +149,7 @@ const ProfileForm = () => {
               type="text"
               {...register("department")}
               className={`w-1/4 px-3 py-1 border-b-2 ${
-                errors.username ? "border-b-red-500" : "border-b-gray-300"
+                errors.department ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
               placeholder="Enter your department"
             />
@@ -164,7 +170,7 @@ const ProfileForm = () => {
               type="text"
               {...register("phone")}
               className={`w-2/5 px-3 py-1 border-b-2 ${
-                errors.username ? "border-b-red-500" : "border-b-gray-300"
+                errors.phone ? "border-b-red-500" : "border-b-gray-300"
               } rounded-none focus:outline-none focus:ring-0 focus:border-b-blue-500 bg-white`}
               placeholder="Enter your phone number"
             />
