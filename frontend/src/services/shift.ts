@@ -61,3 +61,19 @@ export const addProfile = async (data: ProfileFormInputs) => {
     throw new Error("Failed to add profile");
   }
 };
+
+export const getTimeSheets = async (date: String) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${baseURL}/timesheet/${date}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("timesheets", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to get timesheets");
+  }
+};

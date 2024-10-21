@@ -1,94 +1,173 @@
 import { CaretLeft, CaretRight, Clock, DotsThree } from "@phosphor-icons/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { useEffect, useState } from "react";
+import { getTimeSheets } from "../../services/shift";
 
-const days = [
-  { date: "2021-12-27", shifts: [] },
-  { date: "2021-12-28", shifts: [] },
-  { date: "2021-12-29", shifts: [] },
-  { date: "2021-12-30", shifts: [] },
-  { date: "2021-12-31", shifts: [] },
-  { date: "2022-01-01", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-02", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-03", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-04", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-05", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-06", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-07", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-08", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-09", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-10", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-11", isCurrentMonth: true, shifts: [] },
-  {
-    date: "2022-01-12",
-    isCurrentMonth: true,
-    isToday: true,
-    shifts: [
-      {
-        id: 6,
-        name: "John Smith",
-        time: "2PM-8PM",
-        datetime: "2022-01-25T14:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-13", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-14", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-15", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-16", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-17", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-18", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-19", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-20", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-21", isCurrentMonth: true, shifts: [] },
-  {
-    date: "2022-01-22",
-    isCurrentMonth: true,
-    isSelected: true,
-    shifts: [
-      {
-        id: 5,
-        name: "Jane Doe",
-        time: "9AM-5PM",
-        datetime: "2022-01-22T21:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-01-23", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-24", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-25", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-26", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-27", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-28", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-29", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-30", isCurrentMonth: true, shifts: [] },
-  { date: "2022-01-31", isCurrentMonth: true, shifts: [] },
-  { date: "2022-02-01", shifts: [] },
-  { date: "2022-02-02", shifts: [] },
-  { date: "2022-02-03", shifts: [] },
-  {
-    date: "2022-02-04",
-    shifts: [
-      {
-        id: 7,
-        name: "Sarah Johnson",
-        time: "9AM-5PM",
-        datetime: "2022-02-04T21:00",
-        href: "#",
-      },
-    ],
-  },
-  { date: "2022-02-05", shifts: [] },
-  { date: "2022-02-06", shifts: [] },
-];
-const selectedDay = days.find((day) => day.isSelected);
+// const days = [
+//   { date: "2021-12-27", shifts: [] },
+//   { date: "2021-12-28", shifts: [] },
+//   { date: "2021-12-29", shifts: [] },
+//   { date: "2021-12-30", shifts: [] },
+//   { date: "2021-12-31", shifts: [] },
+//   { date: "2022-01-01", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-02", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-03", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-04", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-05", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-06", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-07", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-08", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-09", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-10", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-11", isCurrentMonth: true, shifts: [] },
+//   {
+//     date: "2022-01-12",
+//     isCurrentMonth: true,
+//     isToday: true,
+//     isSelected: true,
+
+//     shifts: [
+//       {
+//         id: 6,
+//         name: "John Smith",
+//         time: "2PM-8PM",
+//         datetime: "2022-01-25T14:00",
+//         href: "#",
+//       },
+//     ],
+//   },
+//   { date: "2022-01-13", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-14", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-15", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-16", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-17", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-18", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-19", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-20", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-21", isCurrentMonth: true, shifts: [] },
+//   {
+//     date: "2022-01-22",
+//     isCurrentMonth: true,
+//     shifts: [
+//       {
+//         id: 5,
+//         name: "Jane Doe",
+//         time: "9AM-5PM",
+//         datetime: "2022-01-22T21:00",
+//         href: "#",
+//       },
+//     ],
+//   },
+//   { date: "2022-01-23", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-24", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-25", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-26", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-27", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-28", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-29", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-30", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-01-31", isCurrentMonth: true, shifts: [] },
+//   { date: "2022-02-01", shifts: [] },
+//   { date: "2022-02-02", shifts: [] },
+//   { date: "2022-02-03", shifts: [] },
+//   {
+//     date: "2022-02-04",
+//     shifts: [
+//       {
+//         id: 7,
+//         name: "Sarah Johnson",
+//         time: "9AM-5PM",
+//         datetime: "2022-02-04T21:00",
+//         href: "#",
+//       },
+//     ],
+//   },
+//   { date: "2022-02-05", shifts: [] },
+//   { date: "2022-02-06", shifts: [] },
+// ];
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 const Calendar = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    (async () => {
+      const data = await getTimeSheets(formatDate(currentDate));
+      console.log(data);
+    })();
+  }, []);
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getCalendarDays = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+
+    // Get the day of week for the first day of the month (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    let firstDayOfMonth = new Date(year, month, 1).getDay();
+    // Adjust to make Monday the first day of the week
+    firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+    let calendarDays = [];
+
+    // Previous month's days
+    for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+      const prevMonthDate = new Date(year, month, 0 - i);
+      calendarDays.push({
+        date: formatDate(prevMonthDate),
+        isCurrentMonth: false,
+        isSelected: false,
+        isToday: false,
+        shifts: [],
+      });
+    }
+
+    // Current month's days
+    for (let i = 1; i <= daysInMonth; i++) {
+      const currentDate = new Date(year, month, i);
+      calendarDays.push({
+        date: formatDate(currentDate),
+        isCurrentMonth: true,
+        isSelected: false,
+        isToday: false,
+        shifts: [],
+      });
+    }
+
+    // Next month's days
+    const daysToAdd = 42 - calendarDays.length;
+    for (let i = 1; i < 7 - daysToAdd; i++) {
+      const nextMonthDate = new Date(year, month + 1, i);
+      calendarDays.push({
+        date: formatDate(nextMonthDate),
+        isCurrentMonth: false,
+        isSelected: false,
+        isToday: false,
+        shifts: [],
+      });
+    }
+
+    return calendarDays;
+  };
+
+  const calendarDays = getCalendarDays(currentDate);
+  const selectedDay = calendarDays.find((day) => day.isSelected);
+
+  console.log(calendarDays);
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
@@ -188,7 +267,7 @@ const Calendar = () => {
         </div>
         <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
           <div className="hidden w-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
-            {days.map((day) => (
+            {calendarDays.map((day) => (
               <div
                 key={day.date}
                 className={classNames(
@@ -234,7 +313,7 @@ const Calendar = () => {
             ))}
           </div>
           <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
-            {days.map((day) => (
+            {calendarDays.map((day) => (
               <button
                 key={day.date}
                 type="button"
