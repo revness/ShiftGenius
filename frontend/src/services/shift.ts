@@ -1,11 +1,12 @@
 import axios from "axios";
 import { SignUpFormInputs } from "../pages/SignUp/SignUp";
 import { SignInFormInputs } from "../pages/SignIn/SignIn";
-import { ProfileFormInputs } from "../pages/Profile/profile";
+import { ProfileFormInputs } from "../pages/Profile/schema";
 
 const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
 export interface User {
+  id: string;
   token: string;
   userName: string;
   email: string;
@@ -50,6 +51,23 @@ export const addProfile = async (data: ProfileFormInputs) => {
     const token = localStorage.getItem("token");
     console.log("profileToken", token);
     const response = await axios.post(`${baseURL}/profile/add`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response.data);
+    return response.data as User;
+  } catch (error) {
+    throw new Error("Failed to add profile");
+  }
+};
+
+export const getProfile = async (id: string) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("profileToken", token);
+    const response = await axios.get(`${baseURL}/profile/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

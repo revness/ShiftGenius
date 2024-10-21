@@ -1,18 +1,11 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import schema from "./schema"; // Assuming the schema is in TypeScript
+import { ProfileFormInputs, schema } from "./schema";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContextProvider";
 import { addProfile } from "../../services/shift";
 import { useNavigate } from "react-router-dom";
-
-export interface ProfileFormInputs {
-  username: string;
-  email: string;
-  position: string;
-  department: string;
-  phone: string;
-}
+import { ProfileUserContext } from "../../context/ProfileUserProvider";
 
 const ProfileForm = () => {
   const navigate = useNavigate();
@@ -20,13 +13,19 @@ const ProfileForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const userContext = useContext(UserContext);
+  const profileUserContext = useContext(ProfileUserContext);
 
   //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
   if (!userContext) {
     throw new Error("useContext must be used within a UserProvider");
   }
 
+  if (!profileUserContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+
   const { user } = userContext;
+  const { setProfileUser } = profileUserContext;
 
   const {
     handleSubmit,
@@ -39,9 +38,9 @@ const ProfileForm = () => {
 
   // console.log(errors);
 
-  if (isSubmitSuccessful) {
-    reset();
-  }
+  // if (isSubmitSuccessful) {
+  //   reset();
+  // }
 
   const onSubmit: SubmitHandler<ProfileFormInputs> = async (data) => {
     try {
@@ -49,10 +48,18 @@ const ProfileForm = () => {
       setSuccess(null);
       const res = await addProfile(data);
       if (res) {
+        setProfileUser({
+          id: res.id,
+          userName: user?.userName || "",
+          email: user?.email || "",
+          position: res.position,
+          department: res.department,
+          phone: res.phone,
+        });
         setSuccess("Profile updated successfully!");
-        navigate("/profile");
+        navigate("/me");
       }
-      console.log("addProfile response", res); // Log the response
+      console.log("addProfile response", res);
     } catch (error) {
       console.error("An unexpected error occurred:", error);
       setError("Failed to update profile");
@@ -84,7 +91,7 @@ const ProfileForm = () => {
           {/* Username Field  (read only) */}
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700 mb-2">
-              Username
+              Username (can't edit)
             </label>
             <input
               defaultValue={user?.userName || ""}
@@ -100,7 +107,7 @@ const ProfileForm = () => {
           {/* Email Field (read only)*/}
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">
-              Email
+              Email (can't edit)
             </label>
             <input
               defaultValue={user?.email || ""}

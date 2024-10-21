@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 
-const schema = z.object({
+export const schema = z.object({
   username: z.string().optional(),
   // .min(3, "Username must be at least 3 characters long")
   // .max(20, "Username must not exceed 20 characters"),
@@ -17,4 +17,4 @@ const schema = z.object({
     .regex(/^\d{10,15}$/, "Phone number should be between 10 to 15 digits"),
 });
 
-export default schema;
+export type ProfileFormInputs = z.infer<typeof schema>;

@@ -7,21 +7,27 @@ import Navbar from "./components/Navbar/Navbar";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Profile from "./pages/Profile/profile";
 import UserContextProvider from "./context/UserContextProvider";
+import PositionContextProvider from "./context/ProfileUserProvider";
+import ProfileCard from "./components/ProfileCard/ProfileCard";
+
 function App() {
   return (
     <div className="mx-auto max-w-7xl ">
       <BrowserRouter>
-        <UserContextProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/sign-in" element={<SignIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
-          </Routes>
-          {/* <Footer /> */}
-        </UserContextProvider>
+        <PositionContextProvider>
+          <UserContextProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/me" element={<ProfileCard />} />
+              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/sign-up" element={<SignUp />} />
+            </Routes>
+            {/* <Footer /> */}
+          </UserContextProvider>
+        </PositionContextProvider>
       </BrowserRouter>
     </div>
   );
