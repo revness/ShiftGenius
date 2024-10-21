@@ -6,7 +6,7 @@ import { signUp } from "../../services/shift";
 import { useState } from "react";
 
 export interface SignUpFormInputs {
-  username: string;
+  userName: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -55,12 +55,12 @@ const SignUp = () => {
           <input
             id="usernameInput"
             type="text"
-            {...register("username")}
+            {...register("userName")}
             placeholder="Username"
             className="w-full p-3 border border-gray-300 rounded-md bg-gray-100"
           />
           <small className="block mt-1 text-red-500">
-            {errors?.username?.message ?? "\u00A0"}
+            {errors?.userName?.message ?? "\u00A0"}
           </small>
         </div>
 

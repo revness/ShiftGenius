@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SignUpFormInputs } from "../pages/SignUp/SignUp";
 import { SignInFormInputs } from "../pages/SignIn/SignIn";
+import { ProfileFormInputs } from "../pages/Profile/profile";
 
 const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -8,6 +9,9 @@ export interface User {
   token: string;
   userName: string;
   email: string;
+  position: string;
+  department: string;
+  phone: string;
 }
 
 export const signUp = async (data: SignUpFormInputs) => {
@@ -32,10 +36,28 @@ export const logIn = async (data: SignInFormInputs) => {
       },
     });
     console.log("login", response.data);
-    const { token, userName, email } = response.data;
+    console.log("loginToken", response.data.token);
+    const { token, userName, email } = response.data as User;
+    localStorage.setItem("token", token);
     return { token, userName, email };
-    return response.data as User;
   } catch (error) {
     throw new Error("Failed to login");
+  }
+};
+
+export const addProfile = async (data: ProfileFormInputs) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("profileToken", token);
+    const response = await axios.post(`${baseURL}/profile/add`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const { position, department, phone } = response.data as User;
+    return { position, department, phone };
+  } catch (error) {
+    throw new Error("Failed to add profile");
   }
 };
