@@ -8,7 +8,6 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Profile from "./pages/Profile/profile";
 import UserContextProvider from "./context/UserContextProvider";
 import PositionContextProvider from "./context/ProfileUserProvider";
-import ProfileCard from "./components/ProfileCard/ProfileCard";
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/me" element={<ProfileCard />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
             </Routes>

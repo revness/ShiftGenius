@@ -57,7 +57,7 @@ const ProfileForm = () => {
           phone: res.phone,
         });
         setSuccess("Profile updated successfully!");
-        navigate("/me");
+        navigate("/");
       }
       console.log("addProfile response", res);
     } catch (error) {
