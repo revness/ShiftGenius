@@ -50,6 +50,16 @@ Team member : Chapman, Jenny
   - Discuss main feature and UI. Assign tickets
   - Add profile endpoint CRU operations.
   - Add profile form UI on Frontend,update readme.md
+- 19-10-24 & 20-10-24
+  - add profile fronted connect to backend successfully
+  - Create Ui for calendar,
+  - Create navBar
+  - Create Shift form, to submit shifts
+  - create endpoints for shifts/timeSheets
+  - debug cors issue
+- 21-10-24
+- update navBar with Me component slideshow profile info
+- user basic info implement on dashboard
 
 # Todo
 
