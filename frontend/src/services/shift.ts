@@ -77,3 +77,19 @@ export const getTimeSheets = async (date: String) => {
     throw new Error("Failed to get timesheets");
   }
 };
+
+export const postTimeSheet = async (data: any) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(`${baseURL}/timesheet`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("postTimeSheet", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to post timesheet");
+  }
+};

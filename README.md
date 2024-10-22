@@ -51,6 +51,13 @@ Team member : Chapman, Jenny
   - Add profile endpoint CRU operations.
   - Add profile form UI on Frontend,update readme.md
 
+  -22-10-24
+    - Make calendar ui dynamic, gets dates via JS date method
+    - Make buttons clickable to rotate through dates on front end
+    - adds shift button to show/unshow shift form to add shifts.
+    - adds logic to retrieve shifts and add to calendar object
+    
+
 # Todo
 
 - Change to color icons or images for tech stack

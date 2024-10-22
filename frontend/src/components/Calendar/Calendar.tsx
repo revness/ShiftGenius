@@ -2,6 +2,7 @@ import { CaretLeft, CaretRight, Clock, DotsThree } from "@phosphor-icons/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { getTimeSheets } from "../../services/shift";
+import Shifts from "../Shifts/Shifts";
 
 // const days = [
 //   { date: "2021-12-27", shifts: [] },
@@ -89,6 +90,49 @@ import { getTimeSheets } from "../../services/shift";
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
+// Types for shift/event data
+interface Shift {
+  id: number;
+  name: string;
+  time: string;
+  datetime: string;
+  href: string;
+}
+
+// Type for individual calendar day
+interface CalendarDay {
+  date: string;
+  isCurrentMonth: boolean;
+  isSelected: boolean;
+  isToday: boolean;
+  shifts: Shift[];
+}
+
+// Type for the component's props (if needed)
+interface CalendarProps {
+  initialDate?: Date;
+}
+
+// Helper type for className utility
+type ClassNameValue = string | boolean | undefined;
+
+const getMonthName = (monthNumber: number) => {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  return months[monthNumber];
+};
 
 const formatDate = (date: Date) => {
   const year = date.getFullYear();
@@ -100,6 +144,9 @@ const formatDate = (date: Date) => {
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+  const [showShifts, setShowShifts] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -108,30 +155,25 @@ const Calendar = () => {
     })();
   }, []);
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
   const getCalendarDays = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const daysInMonth = getDaysInMonth(year, month);
-
-    // Get the day of week for the first day of the month (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     let firstDayOfMonth = new Date(year, month, 1).getDay();
-    // Adjust to make Monday the first day of the week
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
-    let calendarDays = [];
+    const days: CalendarDay[] = [];
+    const today = formatDate(new Date());
 
     // Previous month's days
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const prevMonthDate = new Date(year, month, 0 - i);
-      calendarDays.push({
-        date: formatDate(prevMonthDate),
+      const dateString = formatDate(prevMonthDate);
+      days.push({
+        date: dateString,
         isCurrentMonth: false,
         isSelected: false,
-        isToday: false,
+        isToday: dateString === today,
         shifts: [],
       });
     }
@@ -139,46 +181,66 @@ const Calendar = () => {
     // Current month's days
     for (let i = 1; i <= daysInMonth; i++) {
       const currentDate = new Date(year, month, i);
-      calendarDays.push({
-        date: formatDate(currentDate),
+      const dateString = formatDate(currentDate);
+      days.push({
+        date: dateString,
         isCurrentMonth: true,
-        isSelected: false,
-        isToday: false,
+        isSelected: dateString === selectedDate,
+        isToday: dateString === today,
         shifts: [],
       });
     }
 
     // Next month's days
-    const daysToAdd = 42 - calendarDays.length;
-    for (let i = 1; i < 7 - daysToAdd; i++) {
+    const lastDayOfMonth = new Date(year, month, daysInMonth);
+    let lastDayOfWeek = lastDayOfMonth.getDay();
+    // Adjust to make Sunday the last day of the week
+    lastDayOfWeek = lastDayOfWeek === 0 ? 6 : lastDayOfWeek - 1;
+    for (let i = 1; i < 7 - lastDayOfWeek; i++) {
       const nextMonthDate = new Date(year, month + 1, i);
-      calendarDays.push({
-        date: formatDate(nextMonthDate),
+      const dateString = formatDate(nextMonthDate);
+      days.push({
+        date: dateString,
         isCurrentMonth: false,
-        isSelected: false,
-        isToday: false,
+        isSelected: dateString === selectedDate,
+        isToday: dateString === today,
         shifts: [],
       });
     }
 
-    return calendarDays;
+    return days;
   };
 
-  const calendarDays = getCalendarDays(currentDate);
-  const selectedDay = calendarDays.find((day) => day.isSelected);
+  // Update calendar days when current date or selected date changes
+  useEffect(() => {
+    setCalendarDays(getCalendarDays(currentDate));
+  }, [currentDate, selectedDate]);
 
-  console.log(calendarDays);
+  // Handle day selection
+  const handleDaySelect = (date: string) => {
+    setSelectedDate(date);
+  };
+
   return (
     <div className="lg:flex lg:h-full lg:flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
         <h1 className="text-base font-semibold leading-6 text-gray-900">
-          <time dateTime="2022-01">January 2022</time>
+          <time dateTime="2022-01">
+            {getMonthName(currentDate.getMonth()) +
+              " " +
+              currentDate.getFullYear()}
+          </time>
         </h1>
         <div className="flex items-center">
           <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch md:ml-4">
             <button
               type="button"
               className="flex h-9 w-12 items-center justify-center rounded-l-md border-y border-l border-gray-300 pr-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pr-0 md:hover:bg-gray-50"
+              onClick={() =>
+                setCurrentDate(
+                  new Date(currentDate.setMonth(currentDate.getMonth() - 1))
+                )
+              }
             >
               <span className="sr-only">Previous month</span>
               <CaretLeft className="h-5 w-5" aria-hidden="true" />
@@ -186,6 +248,7 @@ const Calendar = () => {
             <button
               type="button"
               className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
+              onClick={() => setCurrentDate(new Date())}
             >
               Today
             </button>
@@ -193,6 +256,11 @@ const Calendar = () => {
             <button
               type="button"
               className="flex h-9 w-12 items-center justify-center rounded-r-md border-y border-r border-gray-300 pl-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pl-0 md:hover:bg-gray-50"
+              onClick={() =>
+                setCurrentDate(
+                  new Date(currentDate.setMonth(currentDate.getMonth() + 1))
+                )
+              }
             >
               <span className="sr-only">Next month</span>
               <CaretRight className="h-5 w-5" aria-hidden="true" />
@@ -203,6 +271,7 @@ const Calendar = () => {
             <button
               type="button"
               className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={() => setShowShifts(!showShifts)}
             >
               Add shift
             </button>
@@ -222,6 +291,7 @@ const Calendar = () => {
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                    onClick={() => setShowShifts(!showShifts)}
                   >
                     Create shift
                   </a>
@@ -241,6 +311,7 @@ const Calendar = () => {
           </Menu>
         </div>
       </header>
+      <div>{showShifts && <Shifts />}</div>
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
           <div className="bg-white py-2">
@@ -274,6 +345,7 @@ const Calendar = () => {
                   day.isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-500",
                   "relative px-3 py-2"
                 )}
+                onClick={() => handleDaySelect(day.date)}
               >
                 <time
                   dateTime={day.date}
@@ -287,7 +359,7 @@ const Calendar = () => {
                 </time>
                 {day.shifts.length > 0 && (
                   <ol className="mt-2">
-                    {day.shifts.slice(0, 2).map((event) => (
+                    {day.shifts.slice(0, 2).map((event: Shift) => (
                       <li key={event.id}>
                         <a href={event.href} className="group flex">
                           <p className="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">
@@ -332,6 +404,7 @@ const Calendar = () => {
                     "text-gray-500",
                   "flex h-14 flex-col px-3 py-2 hover:bg-gray-100 focus:z-10"
                 )}
+                onClick={() => handleDaySelect(day.date)}
               >
                 <time
                   dateTime={day.date}
@@ -348,7 +421,7 @@ const Calendar = () => {
                 <span className="sr-only">{day.shifts.length} shifts</span>
                 {day.shifts.length > 0 && (
                   <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
-                    {day.shifts.map((event) => (
+                    {day.shifts.map((event: Shift) => (
                       <span
                         key={event.id}
                         className="mx-0.5 mb-1 h-1.5 w-1.5 rounded-full bg-gray-400"
@@ -361,35 +434,37 @@ const Calendar = () => {
           </div>
         </div>
       </div>
-      {selectedDay && selectedDay.shifts.length > 0 && (
+      {selectedDate && (
         <div className="px-4 py-10 sm:px-6 lg:hidden">
           <ol className="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white text-sm shadow ring-1 ring-black ring-opacity-5">
-            {selectedDay.shifts.map((event) => (
-              <li
-                key={event.id}
-                className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50"
-              >
-                <div className="flex-auto">
-                  <p className="font-semibold text-gray-900">{event.name}</p>
-                  <time
-                    dateTime={event.datetime}
-                    className="mt-2 flex items-center text-gray-700"
-                  >
-                    <Clock
-                      className="mr-2 h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    {event.time}
-                  </time>
-                </div>
-                <a
-                  href={event.href}
-                  className="ml-6 flex-none self-center rounded-md bg-white px-3 py-2 font-semibold text-gray-900 opacity-0 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 focus:opacity-100 group-hover:opacity-100"
+            {calendarDays
+              .find((day) => day.date === selectedDate)
+              ?.shifts.map((event) => (
+                <li
+                  key={event.id}
+                  className="group flex p-4 pr-6 focus-within:bg-gray-50 hover:bg-gray-50"
                 >
-                  Edit<span className="sr-only">, {event.name}</span>
-                </a>
-              </li>
-            ))}
+                  <div className="flex-auto">
+                    <p className="font-semibold text-gray-900">{event.name}</p>
+                    <time
+                      dateTime={event.datetime}
+                      className="mt-2 flex items-center text-gray-700"
+                    >
+                      <Clock
+                        className="mr-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      {event.time}
+                    </time>
+                  </div>
+                  <a
+                    href={event.href}
+                    className="ml-6 flex-none self-center rounded-md bg-white px-3 py-2 font-semibold text-gray-900 opacity-0 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 focus:opacity-100 group-hover:opacity-100"
+                  >
+                    Edit<span className="sr-only">, {event.name}</span>
+                  </a>
+                </li>
+              ))}
           </ol>
         </div>
       )}
