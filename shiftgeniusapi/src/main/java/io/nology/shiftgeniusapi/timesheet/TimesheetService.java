@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import io.nology.shiftgeniusapi.auth.User;
 import io.nology.shiftgeniusapi.auth.UserRepository;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 
 @Service
 public class TimesheetService {
@@ -31,8 +32,19 @@ public class TimesheetService {
         return timesheetRepository.save(timesheet);
     }
 
-    public List<Timesheet> getTimesheets() {
-        return timesheetRepository.findAll();
+    public List<Timesheet> getTimesheets(String date) {
+        // get the month and year from the date
+        String[] dateParts = date.split("-");
+        int year = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]);
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+        return timesheetRepository.findByDateBetween(startDate, endDate);
+
+        // System.out.println(date + " is the date");
+        // LocalDate parsedDate = LocalDate.parse(date);
+        // System.out.println(parsedDate + " is the parsed date");
+        // return timesheetRepository.findByDate(parsedDate);
     }
 
     public Timesheet getTimesheet(Long id) {

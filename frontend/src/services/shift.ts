@@ -79,3 +79,35 @@ export const getProfile = async (id: string) => {
     throw new Error("Failed to add profile");
   }
 };
+
+export const getTimeSheets = async (date: String) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${baseURL}/timesheet/${date}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("timesheets", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to get timesheets");
+  }
+};
+
+export const postTimeSheet = async (data: any) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(`${baseURL}/timesheet`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("postTimeSheet", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to post timesheet");
+  }
+};
