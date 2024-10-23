@@ -27,6 +27,13 @@ public class TimesheetController {
         return new ResponseEntity<Timesheet>(newTimesheet, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/approve/{id}")
+    public ResponseEntity<Timesheet> approveTimesheet(@PathVariable Long id) throws Exception {
+        System.out.println("Approving timesheet with id: " + id);
+        Timesheet approvedTimesheet = timesheetService.approveTimesheet(id);
+        return new ResponseEntity<Timesheet>(approvedTimesheet, HttpStatus.OK);
+    }
+
     @GetMapping("/{date}")
     public ResponseEntity<List<Timesheet>> getTimesheets(@PathVariable String date) {
         List<Timesheet> timesheets = timesheetService.getTimesheets(date);
