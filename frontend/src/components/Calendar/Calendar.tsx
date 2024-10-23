@@ -70,7 +70,7 @@ const Calendar = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const selectedDay = calendarDays.find((day: CalendarDay) => day.isSelected);
 
-  // Format time to 12-hour format
+  // Format time to 12-hour format for shift displaying purposes
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":");
     const hour = parseInt(hours);
@@ -79,7 +79,7 @@ const Calendar = () => {
     return `${hour12}:${minutes} ${ampm}`;
   };
 
-  // Format shift time range
+  // Format shift time range for display of shift times
   const formatShiftTime = (startTime: string, endTime: string) => {
     const start = formatTime(startTime.slice(0, 5));
     const end = formatTime(endTime.slice(0, 5));
@@ -123,7 +123,7 @@ const Calendar = () => {
     const days: CalendarDay[] = [];
     const today = formatDate(new Date());
 
-    // Previous month's days
+    // Previous moth's days
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const prevMonthDate = new Date(year, month, 0 - i);
       const dateString = formatDate(prevMonthDate);
@@ -176,7 +176,7 @@ const Calendar = () => {
       isSelected: day.date === selectedDate,
     }));
     setCalendarDays(updatedDays);
-  }, [currentDate]); // Only depend on currentDate, not selectedDate
+  }, [currentDate, selectedDate]); // Only depend on currentDate, not selectedDate
 
   // Handle day selection
   const handleDaySelect = (date: string) => {
@@ -189,6 +189,7 @@ const Calendar = () => {
         isSelected: day.date === newSelectedDate,
       }))
     );
+    console.log("Selected date:", newSelectedDate);
   };
 
   return (
@@ -218,7 +219,10 @@ const Calendar = () => {
               <button
                 type="button"
                 className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
-                onClick={() => setCurrentDate(new Date())}
+                onClick={() => {
+                  setCurrentDate(new Date());
+                  handleDaySelect(formatDate(new Date()));
+                }}
               >
                 Today
               </button>
@@ -242,7 +246,7 @@ const Calendar = () => {
                 className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={() => setShowShifts(!showShifts)}
               >
-                Add shift
+                {showShifts ? "Close" : "Create shift"}
               </button>
             </div>
             <Menu as="div" className="relative ml-6 md:hidden">
@@ -262,7 +266,7 @@ const Calendar = () => {
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
                       onClick={() => setShowShifts(!showShifts)}
                     >
-                      Create shift
+                      {showShifts ? "Close" : "Create shift"}
                     </a>
                   </MenuItem>
                 </div>
@@ -271,6 +275,10 @@ const Calendar = () => {
                     <a
                       href="#"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                      onClick={() => {
+                        setCurrentDate(new Date());
+                        handleDaySelect(formatDate(new Date()));
+                      }}
                     >
                       Go to today
                     </a>
@@ -316,13 +324,21 @@ const Calendar = () => {
                       : "bg-gray-50 text-gray-500",
                     "relative px-3 py-2 "
                   )}
+                  onClick={() => handleDaySelect(day.date)}
                 >
                   <time
                     dateTime={day.date}
                     className={
-                      day.isToday
-                        ? "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
-                        : undefined
+                      classNames(
+                        day.isToday && " text-indigo-600",
+                        day.isSelected &&
+                          "flex h-6 w-6 items-center justify-center rounded-full text-white",
+                        day.isSelected && day.isToday && "bg-indigo-600 ",
+                        day.isSelected && !day.isToday && "bg-gray-900"
+                      )
+                      // day.isToday
+                      //   ? "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
+                      //   : "flex h-6 w-6 items-center justify-center rounded-full"
                     }
                   >
                     {day.date.split("-").pop()?.replace(/^0/, "")}
@@ -407,7 +423,7 @@ const Calendar = () => {
           </div>
         </div>
         {selectedDay && (
-          <div className="px-4 py-10 sm:px-6 lg:hidden">
+          <div className="px-4 py-10 sm:px-6">
             <div className="rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-base font-semibold">
@@ -425,9 +441,23 @@ const Calendar = () => {
                         <p className="font-medium text-gray-900">
                           {shift.user.userName}
                         </p>
+                        <p className="text-gray-500">{shift.description}</p>
                         <time className="text-gray-500">
                           {formatShiftTime(shift.startTime, shift.endTime)}
                         </time>
+                      </div>
+                      <div className="flex flex-col">
+                        <button>
+                          <span className="text-indigo-600">Edit</span>
+                        </button>
+                        <button>
+                          <span className="text-indigo-600">Delete</span>
+                        </button>
+                        <button>
+                          <span className="text-indigo-600">
+                            Mark as approved
+                          </span>
+                        </button>
                       </div>
                     </li>
                   ))}

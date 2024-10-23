@@ -52,4 +52,10 @@ public class TimesheetController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/approve/{id}")
+    public ResponseEntity<Timesheet> approveTimesheet(@PathVariable Long id) throws Exception {
+        Timesheet approvedTimesheet = timesheetService.approveTimesheet(id);
+        return new ResponseEntity<Timesheet>(approvedTimesheet, HttpStatus.OK);
+    }
+
 }

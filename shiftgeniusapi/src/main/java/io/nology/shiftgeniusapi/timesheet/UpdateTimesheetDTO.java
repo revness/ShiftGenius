@@ -14,4 +14,5 @@ public class UpdateTimesheetDTO {
     private LocalTime breakTime;
     private String description;
     private Long userId;
+    private boolean approved;
 }

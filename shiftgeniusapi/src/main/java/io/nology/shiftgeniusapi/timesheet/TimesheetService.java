@@ -28,6 +28,7 @@ public class TimesheetService {
         timesheet.setEndTime(data.getEndTime());
         timesheet.setBreakTime(data.getBreakTime());
         timesheet.setDescription(data.getDescription());
+        timesheet.setApproved(false);
         timesheet.setUser(user);
         return timesheetRepository.save(timesheet);
     }
@@ -69,6 +70,15 @@ public class TimesheetService {
 
     public void deleteTimesheet(Long id) {
         timesheetRepository.deleteById(id);
+    }
+
+    public Timesheet approveTimesheet(Long id) throws Exception {
+        Timesheet timesheet = timesheetRepository.findById(id).orElse(null);
+        if (timesheet == null) {
+            throw new Exception("Timesheet not found");
+        }
+        timesheet.setApproved(!timesheet.isApproved());
+        return timesheetRepository.save(timesheet);
     }
 
 }
