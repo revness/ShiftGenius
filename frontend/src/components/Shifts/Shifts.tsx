@@ -13,7 +13,10 @@ export interface ShiftFormInputs {
   userId: string;
 }
 
-const Shifts = () => {
+interface ShiftsProps {
+  onSubmitSuccess: () => void;
+}
+const Shifts = ({ onSubmitSuccess }: ShiftsProps) => {
   const [error, setError] = useState<string | null>(null);
   const {
     handleSubmit,
@@ -31,7 +34,7 @@ const Shifts = () => {
       setError(null);
       const res = await postTimeSheet(data);
       if (res) {
-        //do something
+        onSubmitSuccess();
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);

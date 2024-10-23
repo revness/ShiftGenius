@@ -3,10 +3,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { getTimeSheets } from "../../services/shift";
 import Shifts from "../Shifts/Shifts";
+import { markApproved, deleteShift } from "../../services/shift";
 
-function classNames(...classes: (string | boolean | undefined)[]) {
+//utility class for conditional rendering of classes
+//rest paramater syntax, collects into array called classes.
+const classNames = (...classes: (string | boolean | undefined)[]) => {
   return classes.filter(Boolean).join(" ");
-}
+};
 // Types for shift data
 interface Shift {
   id: number;
@@ -16,6 +19,7 @@ interface Shift {
   breakTime: string;
   description: string;
   user: User;
+  approved: boolean;
 }
 
 interface User {
@@ -68,6 +72,7 @@ const Calendar = () => {
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [showShifts, setShowShifts] = useState<boolean>(false);
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const selectedDay = calendarDays.find((day: CalendarDay) => day.isSelected);
 
   // Format time to 12-hour format for shift displaying purposes
@@ -99,7 +104,7 @@ const Calendar = () => {
     };
 
     fetchAndUpdateShifts();
-  }, [currentDate]);
+  }, [currentDate, refreshTrigger]);
   // Update calendar days with shifts
   const updateCalendarWithShifts = (shiftsData: Shift[]) => {
     const days = getCalendarDays(currentDate);
@@ -118,6 +123,7 @@ const Calendar = () => {
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     let firstDayOfMonth = new Date(year, month, 1).getDay();
+    // Get day number: sun=0, mon=1, tue=2, wed=3 ...
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
     const days: CalendarDay[] = [];
@@ -190,6 +196,26 @@ const Calendar = () => {
       }))
     );
     console.log("Selected date:", newSelectedDate);
+  };
+
+  // Handle shift approval
+  const handleApproveShift = (id: string) => async () => {
+    try {
+      await markApproved(id);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error approving shift:", error);
+    }
+  };
+
+  // Handle shift deletion
+  const handleDelete = (id: string) => async () => {
+    try {
+      await deleteShift(id);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error deleting shift:", error);
+    }
   };
 
   return (
@@ -288,7 +314,13 @@ const Calendar = () => {
             </Menu>
           </div>
         </header>
-        <div>{showShifts && <Shifts />}</div>
+        <div>
+          {showShifts && (
+            <Shifts
+              onSubmitSuccess={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+        </div>
         <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
           <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
             <div className="bg-white py-2">
@@ -427,7 +459,7 @@ const Calendar = () => {
             <div className="rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-base font-semibold">
-                  Shifts for {new Date(selectedDay.date).toLocaleDateString()}
+                  Shifts for {formatDate(new Date(selectedDay.date))}
                 </h2>
               </div>
               {selectedDay.shifts.length > 0 ? (
@@ -445,17 +477,22 @@ const Calendar = () => {
                         <time className="text-gray-500">
                           {formatShiftTime(shift.startTime, shift.endTime)}
                         </time>
+                        <p className="text-gray-500">
+                          Approved: {shift.approved ? "Yes" : "No"}
+                        </p>
                       </div>
-                      <div className="flex flex-col">
-                        <button>
+                      <div className="flex flex-col justify-center">
+                        {/* <button>
                           <span className="text-indigo-600">Edit</span>
-                        </button>
-                        <button>
+                        </button> */}
+                        <button onClick={handleDelete(shift.id.toString())}>
                           <span className="text-indigo-600">Delete</span>
                         </button>
-                        <button>
+                        <button
+                          onClick={handleApproveShift(shift.id.toString())}
+                        >
                           <span className="text-indigo-600">
-                            Mark as approved
+                            Mark as {shift.approved ? "pending" : "approved"}
                           </span>
                         </button>
                       </div>

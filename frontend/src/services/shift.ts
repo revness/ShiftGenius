@@ -114,3 +114,38 @@ export const postTimeSheet = async (data: any) => {
     throw new Error("Failed to post timesheet");
   }
 };
+export const markApproved = async (id: string) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch(
+      `${baseURL}/timesheet/approve/${id}`,
+      {}, // Empty body since no data needs to be sent
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("markApproved", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to mark approved");
+  }
+};
+
+export const deleteShift = async (id: string) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(`${baseURL}/timesheet/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("deleteShift", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to delete shift");
+  }
+};
