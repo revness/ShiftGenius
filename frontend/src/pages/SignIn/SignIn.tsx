@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { logIn } from "../../services/shift";
 import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContextProvider";
+import { AuthContext } from "../../context/AuthContextProvider";
 
 export interface SignInFormInputs {
   email: string;
@@ -15,13 +16,17 @@ const SignIn = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const userContext = useContext(UserContext);
-
   //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
   if (!userContext) {
     throw new Error("useContext must be used within a UserProvider");
   }
-
   const { setUser } = userContext;
+
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+  const { setIsAuthenticated } = authContext;
 
   const {
     handleSubmit,
@@ -45,7 +50,8 @@ const SignIn = () => {
           userName: res.userName,
           email: res.email,
         });
-        navigate("/");
+        setIsAuthenticated(true);
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);

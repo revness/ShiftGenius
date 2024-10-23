@@ -58,15 +58,23 @@ Team member : Chapman, Jenny
   - create endpoints for shifts/timeSheets
   - debug cors issue
 - 21-10-24
-- update navBar with Me component slideshow profile info
-- user basic info implement on dashboard
 
-  -22-10-24
-    - Make calendar ui dynamic, gets dates via JS date method
-    - Make buttons clickable to rotate through dates on front end
-    - adds shift button to show/unshow shift form to add shifts.
-    - adds logic to retrieve shifts and add to calendar object
-    
+  - update navBar with Me component slideshow profile info
+  - user basic info implement on dashboard
+
+- 22-10-24
+
+  - Make calendar ui dynamic, gets dates via JS date method
+  - Make buttons clickable to rotate through dates on front end
+  - adds shift button to show/unshow shift form to add shifts.
+  - adds logic to retrieve shifts and add to calendar object
+
+- 22-10-24
+  - chapman update???
+- 24-10-24
+- Update localStorage to ensure the user data don't get lost when page get freshed
+- set up authentication and authorization for user to access certain pages or features.
+- update the app logo
 
 # Todo
 

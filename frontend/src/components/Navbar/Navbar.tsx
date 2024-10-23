@@ -1,28 +1,27 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ProfileCard from "../ProfileCard/ProfileCard";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../../context/AuthContextProvider";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
 
-  useEffect(() => {
-    const userName = localStorage.getItem("userName");
-    const email = localStorage.getItem("email");
-    if (userName && email) {
-      setUserName(userName);
-      setEmail(email);
-    }
-  }, [email, userName]);
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+
+  const { isAuthenticated, signOut } = authContext;
 
   const handleSignOut = () => {
-    localStorage.clear();
-    setUserName("");
-    setEmail("");
+    signOut();
+    navigate("/sign-in");
   };
+
   const toggleSlideOut = () => {
     setIsOpen(!isOpen);
   };
@@ -40,7 +39,7 @@ const Navbar = () => {
           Home
         </NavLink>
 
-        {userName && (
+        {isAuthenticated && (
           <button
             onClick={toggleSlideOut}
             //conditional rendering of the button if the user is logged in
@@ -70,20 +69,18 @@ const Navbar = () => {
         </div>
       </div>
 
-      {userName && (
-        <NavLink
-          className={({ isActive }) =>
-            isActive
-              ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-          }
-          to="/dashboard"
-        >
-          Dashboard
-        </NavLink>
-      )}
+      <NavLink
+        className={({ isActive }) =>
+          isActive
+            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+        }
+        to="/dashboard"
+      >
+        Dashboard
+      </NavLink>
 
-      {userName && (
+      {isAuthenticated && (
         <NavLink
           className={({ isActive }) =>
             isActive
@@ -96,7 +93,7 @@ const Navbar = () => {
         </NavLink>
       )}
 
-      {!userName ? (
+      {!isAuthenticated ? (
         <NavLink
           className={({ isActive }) =>
             isActive

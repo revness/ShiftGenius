@@ -5,14 +5,11 @@ import { useContext, useEffect, useState } from "react";
 const UserInfo = () => {
   // const userContext = useContext(UserContext);
   const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const userName = localStorage.getItem("userName");
-    const email = localStorage.getItem("email");
-    if (userName && email) {
+    if (userName) {
       setUserName(userName);
-      setEmail(email);
     }
   });
 
@@ -24,11 +21,8 @@ const UserInfo = () => {
   // const { user } = userContext;
 
   return (
-    <div className="bg-white shadow-md px-9 py-4 max-w-sm mx-auto mt-10 ">
-      <h2 className="text-xl font-bold mb-2 text-gray-800">{userName}</h2>
-      <div className="flex items-center">
-        <span className="text-gray-800">{email}</span>
-      </div>
+    <div className=" shadow-md px-4 py-2 max-w-sm mx-auto ml-20">
+      <h2 className="text-l mb-2 text-gray-800">Welcome, {userName}</h2>
     </div>
   );
 };

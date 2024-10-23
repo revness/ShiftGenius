@@ -1,8 +1,11 @@
 import { CaretLeft, CaretRight, Clock, DotsThree } from "@phosphor-icons/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getTimeSheets } from "../../services/shift";
 import Shifts from "../Shifts/Shifts";
+import UserInfo from "../UserInfo/UserInfoInDashBoard";
+import { AuthContext } from "../../context/AuthContextProvider";
+import { useNavigate } from "react-router-dom";
 import { markApproved, deleteShift } from "../../services/shift";
 
 //utility class for conditional rendering of classes
@@ -74,6 +77,20 @@ const Calendar = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const selectedDay = calendarDays.find((day: CalendarDay) => day.isSelected);
+  const navigate = useNavigate();
+
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("useContext must be used within a UserProvider");
+  }
+  const { isAuthenticated } = authContext;
+
+  const handleShowShifts = () => {
+    if (!isAuthenticated) {
+      navigate("/sign-in");
+    }
+    setShowShifts(!showShifts);
+  };
 
   // Format time to 12-hour format for shift displaying purposes
   const formatTime = (time: string) => {
@@ -229,6 +246,7 @@ const Calendar = () => {
                 currentDate.getFullYear()}
             </time>
           </h1>
+          <UserInfo />
           <div className="flex items-center">
             <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch md:ml-4">
               <button
@@ -270,7 +288,7 @@ const Calendar = () => {
               <button
                 type="button"
                 className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => setShowShifts(!showShifts)}
+                onClick={handleShowShifts}
               >
                 {showShifts ? "Close" : "Create shift"}
               </button>
