@@ -3,8 +3,13 @@ package io.nology.shiftgeniusapi.timesheet;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import io.nology.shiftgeniusapi.auth.Role;
 import io.nology.shiftgeniusapi.auth.User;
 import io.nology.shiftgeniusapi.auth.UserRepository;
 import jakarta.validation.Valid;
@@ -69,10 +74,26 @@ public class TimesheetService {
     }
 
     public void deleteTimesheet(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        User user = UserRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can approve timesheets");
+        }
         timesheetRepository.deleteById(id);
     }
 
     public Timesheet approveTimesheet(Long id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        User user = UserRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can approve timesheets");
+        }
         Timesheet timesheet = timesheetRepository.findById(id).orElse(null);
         if (timesheet == null) {
             throw new Exception("Timesheet not found");
