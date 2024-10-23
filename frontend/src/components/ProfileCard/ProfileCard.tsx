@@ -36,6 +36,7 @@ const ProfileCard = () => {
     };
     fetchProfile();
   }, [profileUser?.id, setProfileUser]);
+
   return (
     <div className="mt-10 font-cambria">
       <div className=" p-6 max-w-sm w-full mx-auto">
@@ -62,19 +63,24 @@ const ProfileCard = () => {
           </div>
         ) : (
           <div className="text-center text-gray-500">
-            <p>Please fill up your profile</p>
+            <p>
+              Please fill up your{" "}
+              <a href="profile" className="underline text-pink-400">
+                profile
+              </a>{" "}
+            </p>
           </div>
         )}
       </div>
 
-      <div className="mt-5 w-full">
+      {/* <div className="mt-5 w-full">
         <button
           type="button"
           className="w-full p-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 mt-4"
         >
           Sign Out
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileFormInputs, schema } from "./schema";
-import { useContext, useState } from "react";
-import { UserContext } from "../../context/UserContextProvider";
+import { useContext, useEffect, useState } from "react";
 import { addProfile } from "../../services/shift";
 import { useNavigate } from "react-router-dom";
 import { ProfileUserContext } from "../../context/ProfileUserProvider";
@@ -12,35 +11,37 @@ const ProfileForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const userContext = useContext(UserContext);
   const profileUserContext = useContext(ProfileUserContext);
 
-  //it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
-  if (!userContext) {
-    throw new Error("useContext must be used within a UserProvider");
-  }
+  // it is a safeguard, TypeScript knows that after this check, userContext is no longer undefined
 
   if (!profileUserContext) {
     throw new Error("useContext must be used within a UserProvider");
   }
 
-  const { user } = userContext;
   const { setProfileUser } = profileUserContext;
+
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const userName = localStorage.getItem("userName");
+    const email = localStorage.getItem("email");
+    if (userName && email) {
+      setUserName(userName);
+      setEmail(email);
+    }
+  }, [email, userName]);
 
   const {
     handleSubmit,
     formState: { isSubmitSuccessful, errors },
     register,
-    reset,
   } = useForm<ProfileFormInputs>({
     resolver: zodResolver(schema),
   });
 
   // console.log(errors);
-
-  // if (isSubmitSuccessful) {
-  //   reset();
-  // }
 
   const onSubmit: SubmitHandler<ProfileFormInputs> = async (data) => {
     try {
@@ -50,8 +51,8 @@ const ProfileForm = () => {
       if (res) {
         setProfileUser({
           id: res.id,
-          userName: user?.userName || "",
-          email: user?.email || "",
+          userName: userName || "",
+          email: email || "",
           position: res.position,
           department: res.department,
           phone: res.phone,
@@ -94,7 +95,7 @@ const ProfileForm = () => {
               Username (can't edit)
             </label>
             <input
-              defaultValue={user?.userName || ""}
+              defaultValue={userName || ""}
               id="username"
               type="text"
               className={`w-1/4 px-3 py-1 border-b-2 ${
@@ -110,7 +111,7 @@ const ProfileForm = () => {
               Email (can't edit)
             </label>
             <input
-              defaultValue={user?.email || ""}
+              defaultValue={email || ""}
               id="email"
               type="email"
               className={`w-2/5 px-3 py-1 border-b-2 ${
