@@ -30,6 +30,7 @@ export const signUp = async (data: SignUpFormInputs) => {
 };
 
 export const logIn = async (data: SignInFormInputs) => {
+  localStorage.clear();
   try {
     const response = await axios.post(`${baseURL}/auth/login`, data, {
       headers: {
@@ -40,6 +41,8 @@ export const logIn = async (data: SignInFormInputs) => {
     console.log("loginToken", response.data.token);
     const { token, userName, email } = response.data as User;
     localStorage.setItem("token", token);
+    localStorage.setItem("userName", userName);
+    localStorage.setItem("email", email);
     return { token, userName, email };
   } catch (error) {
     throw new Error("Failed to login");
