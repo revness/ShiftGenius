@@ -1,12 +1,28 @@
 import { NavLink } from "react-router-dom";
 import ProfileCard from "../ProfileCard/ProfileCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    const userName = localStorage.getItem("userName");
+    const email = localStorage.getItem("email");
+    if (userName && email) {
+      setUserName(userName);
+      setEmail(email);
+    }
+  }, [email, userName]);
+
+  const handleSignOut = () => {
+    localStorage.clear();
+    setUserName("");
+    setEmail("");
+  };
   const toggleSlideOut = () => {
     setIsOpen(!isOpen);
   };
@@ -24,12 +40,19 @@ const Navbar = () => {
           Home
         </NavLink>
 
-        <button
-          onClick={toggleSlideOut}
-          className="bg-gray-800 text-white rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 ml-2"
-        >
-          Me
-        </button>
+        {userName && (
+          <button
+            onClick={toggleSlideOut}
+            //conditional rendering of the button if the user is logged in
+            className={
+              isOpen
+                ? " bg-gray-800 text-white rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 ml-2"
+                : "text-gray-300  rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 ml-2"
+            }
+          >
+            Me
+          </button>
+        )}
 
         {/* Slide-out panel */}
         <div
@@ -46,49 +69,59 @@ const Navbar = () => {
           <ProfileCard />
         </div>
       </div>
-      <NavLink
-        className={({ isActive }) =>
-          isActive
-            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        }
-        to="/dashboard"
-      >
-        Dashboard
-      </NavLink>
 
-      <NavLink
-        className={({ isActive }) =>
-          isActive
-            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        }
-        to="/profile"
-      >
-        Profile
-      </NavLink>
+      {userName && (
+        <NavLink
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          }
+          to="/dashboard"
+        >
+          Dashboard
+        </NavLink>
+      )}
 
-      <NavLink
-        className={({ isActive }) =>
-          isActive
-            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        }
-        to="/sign-in"
-      >
-        Sign-in
-      </NavLink>
+      {userName && (
+        <NavLink
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          }
+          to="/profile"
+        >
+          Profile
+        </NavLink>
+      )}
 
-      {/* <NavLink
-        className={({ isActive }) =>
-          isActive
-            ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-        }
-        to="/sign-up"
-      >
-        Sign-up
-      </NavLink> */}
+      {!userName ? (
+        <NavLink
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          }
+          to="/sign-in"
+        >
+          Sign-in
+        </NavLink>
+      ) : (
+        <NavLink
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+          }
+          to="/"
+          onClick={() => {
+            handleSignOut();
+          }}
+        >
+          Sign-out
+        </NavLink>
+      )}
     </nav>
   );
 };
