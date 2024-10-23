@@ -3,10 +3,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { getTimeSheets } from "../../services/shift";
 import Shifts from "../Shifts/Shifts";
+import { markApproved, deleteShift } from "../../services/shift";
 
-function classNames(...classes: (string | boolean | undefined)[]) {
+//utility class for conditional rendering of classes
+//rest paramater syntax, collects into array called classes.
+const classNames = (...classes: (string | boolean | undefined)[]) => {
   return classes.filter(Boolean).join(" ");
-}
+};
 // Types for shift data
 interface Shift {
   id: number;
@@ -16,6 +19,7 @@ interface Shift {
   breakTime: string;
   description: string;
   user: User;
+  approved: boolean;
 }
 
 interface User {
@@ -68,9 +72,10 @@ const Calendar = () => {
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [showShifts, setShowShifts] = useState<boolean>(false);
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const selectedDay = calendarDays.find((day: CalendarDay) => day.isSelected);
 
-  // Format time to 12-hour format
+  // Format time to 12-hour format for shift displaying purposes
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":");
     const hour = parseInt(hours);
@@ -79,7 +84,7 @@ const Calendar = () => {
     return `${hour12}:${minutes} ${ampm}`;
   };
 
-  // Format shift time range
+  // Format shift time range for display of shift times
   const formatShiftTime = (startTime: string, endTime: string) => {
     const start = formatTime(startTime.slice(0, 5));
     const end = formatTime(endTime.slice(0, 5));
@@ -99,7 +104,7 @@ const Calendar = () => {
     };
 
     fetchAndUpdateShifts();
-  }, [currentDate]);
+  }, [currentDate, refreshTrigger]);
   // Update calendar days with shifts
   const updateCalendarWithShifts = (shiftsData: Shift[]) => {
     const days = getCalendarDays(currentDate);
@@ -118,12 +123,13 @@ const Calendar = () => {
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     let firstDayOfMonth = new Date(year, month, 1).getDay();
+    // Get day number: sun=0, mon=1, tue=2, wed=3 ...
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
     const days: CalendarDay[] = [];
     const today = formatDate(new Date());
 
-    // Previous month's days
+    // Previous moth's days
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const prevMonthDate = new Date(year, month, 0 - i);
       const dateString = formatDate(prevMonthDate);
@@ -176,7 +182,7 @@ const Calendar = () => {
       isSelected: day.date === selectedDate,
     }));
     setCalendarDays(updatedDays);
-  }, [currentDate]); // Only depend on currentDate, not selectedDate
+  }, [currentDate, selectedDate]); // Only depend on currentDate, not selectedDate
 
   // Handle day selection
   const handleDaySelect = (date: string) => {
@@ -189,6 +195,27 @@ const Calendar = () => {
         isSelected: day.date === newSelectedDate,
       }))
     );
+    console.log("Selected date:", newSelectedDate);
+  };
+
+  // Handle shift approval
+  const handleApproveShift = (id: string) => async () => {
+    try {
+      await markApproved(id);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error approving shift:", error);
+    }
+  };
+
+  // Handle shift deletion
+  const handleDelete = (id: string) => async () => {
+    try {
+      await deleteShift(id);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error deleting shift:", error);
+    }
   };
 
   return (
@@ -218,7 +245,10 @@ const Calendar = () => {
               <button
                 type="button"
                 className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
-                onClick={() => setCurrentDate(new Date())}
+                onClick={() => {
+                  setCurrentDate(new Date());
+                  handleDaySelect(formatDate(new Date()));
+                }}
               >
                 Today
               </button>
@@ -242,7 +272,7 @@ const Calendar = () => {
                 className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={() => setShowShifts(!showShifts)}
               >
-                Add shift
+                {showShifts ? "Close" : "Create shift"}
               </button>
             </div>
             <Menu as="div" className="relative ml-6 md:hidden">
@@ -262,7 +292,7 @@ const Calendar = () => {
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
                       onClick={() => setShowShifts(!showShifts)}
                     >
-                      Create shift
+                      {showShifts ? "Close" : "Create shift"}
                     </a>
                   </MenuItem>
                 </div>
@@ -271,6 +301,10 @@ const Calendar = () => {
                     <a
                       href="#"
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                      onClick={() => {
+                        setCurrentDate(new Date());
+                        handleDaySelect(formatDate(new Date()));
+                      }}
                     >
                       Go to today
                     </a>
@@ -280,7 +314,13 @@ const Calendar = () => {
             </Menu>
           </div>
         </header>
-        <div>{showShifts && <Shifts />}</div>
+        <div>
+          {showShifts && (
+            <Shifts
+              onSubmitSuccess={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
+        </div>
         <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
           <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
             <div className="bg-white py-2">
@@ -316,13 +356,21 @@ const Calendar = () => {
                       : "bg-gray-50 text-gray-500",
                     "relative px-3 py-2 "
                   )}
+                  onClick={() => handleDaySelect(day.date)}
                 >
                   <time
                     dateTime={day.date}
                     className={
-                      day.isToday
-                        ? "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
-                        : undefined
+                      classNames(
+                        day.isToday && " text-indigo-600",
+                        day.isSelected &&
+                          "flex h-6 w-6 items-center justify-center rounded-full text-white",
+                        day.isSelected && day.isToday && "bg-indigo-600 ",
+                        day.isSelected && !day.isToday && "bg-gray-900"
+                      )
+                      // day.isToday
+                      //   ? "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
+                      //   : "flex h-6 w-6 items-center justify-center rounded-full"
                     }
                   >
                     {day.date.split("-").pop()?.replace(/^0/, "")}
@@ -407,11 +455,11 @@ const Calendar = () => {
           </div>
         </div>
         {selectedDay && (
-          <div className="px-4 py-10 sm:px-6 lg:hidden">
+          <div className="px-4 py-10 sm:px-6">
             <div className="rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-base font-semibold">
-                  Shifts for {new Date(selectedDay.date).toLocaleDateString()}
+                  Shifts for {formatDate(new Date(selectedDay.date))}
                 </h2>
               </div>
               {selectedDay.shifts.length > 0 ? (
@@ -425,9 +473,28 @@ const Calendar = () => {
                         <p className="font-medium text-gray-900">
                           {shift.user.userName}
                         </p>
+                        <p className="text-gray-500">{shift.description}</p>
                         <time className="text-gray-500">
                           {formatShiftTime(shift.startTime, shift.endTime)}
                         </time>
+                        <p className="text-gray-500">
+                          Approved: {shift.approved ? "Yes" : "No"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        {/* <button>
+                          <span className="text-indigo-600">Edit</span>
+                        </button> */}
+                        <button onClick={handleDelete(shift.id.toString())}>
+                          <span className="text-indigo-600">Delete</span>
+                        </button>
+                        <button
+                          onClick={handleApproveShift(shift.id.toString())}
+                        >
+                          <span className="text-indigo-600">
+                            Mark as {shift.approved ? "pending" : "approved"}
+                          </span>
+                        </button>
                       </div>
                     </li>
                   ))}

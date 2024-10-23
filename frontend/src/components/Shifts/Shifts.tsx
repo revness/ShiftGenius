@@ -13,7 +13,10 @@ export interface ShiftFormInputs {
   userId: string;
 }
 
-const Shifts = () => {
+interface ShiftsProps {
+  onSubmitSuccess: () => void;
+}
+const Shifts = ({ onSubmitSuccess }: ShiftsProps) => {
   const [error, setError] = useState<string | null>(null);
   const {
     handleSubmit,
@@ -31,7 +34,7 @@ const Shifts = () => {
       setError(null);
       const res = await postTimeSheet(data);
       if (res) {
-        //do something
+        onSubmitSuccess();
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);
@@ -40,36 +43,49 @@ const Shifts = () => {
   };
 
   return (
-    <div>
-      <h1>Shifts</h1>
-      {error && <div>{error}</div>}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Date</label>
-          <input type="date" {...register("date")} />
-        </div>
-        <div>
-          <label>Start Time</label>
-          <input type="time" {...register("startTime")} />
-        </div>
-        <div>
-          <label>End Time</label>
-          <input type="time" {...register("endTime")} />
-        </div>
-        <div>
-          <label>Break Time</label>
-          <input type="time" {...register("breakTime")} />
-        </div>
-        <div>
-          <label>Description</label>
-          <input type="text" {...register("description")} />
-        </div>
-        <div>
-          <label>User ID</label>
-          <input type="text" {...register("userId")} />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+    <div className="flex flex-col items-center mx-auto">
+      <div className="border-2 border-gray-400 shadow m-4 p-4 rounded-md">
+        {error && <div>{error}</div>}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              Date
+            </label>
+            <input type="date" {...register("date")} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              Start Time
+            </label>
+            <input type="time" {...register("startTime")} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              End Time
+            </label>
+            <input type="time" {...register("endTime")} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              Break Time
+            </label>
+            <input type="time" {...register("breakTime")} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              Description
+            </label>
+            <input type="text" {...register("description")} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-900">
+              User ID
+            </label>
+            <input type="text" {...register("userId")} />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   );
 };
