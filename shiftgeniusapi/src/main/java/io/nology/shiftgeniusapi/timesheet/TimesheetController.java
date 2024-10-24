@@ -54,7 +54,7 @@ public class TimesheetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTimesheet(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTimesheet(@PathVariable Long id) throws Exception {
         timesheetService.deleteTimesheet(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }

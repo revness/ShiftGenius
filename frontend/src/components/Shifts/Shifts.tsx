@@ -37,13 +37,13 @@ const Shifts = ({ onSubmitSuccess }: ShiftsProps) => {
         onSubmitSuccess();
       }
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
-      setError("Failed to post timesheet");
+      setError("" + error);
     }
   };
 
   return (
     <div className="flex flex-col items-center mx-auto">
+      {error && <div className="text-red-500 text-center">{error}</div>}
       <div className="border-2 border-gray-400 shadow m-4 p-4 rounded-md">
         {error && <div>{error}</div>}
         <form onSubmit={handleSubmit(onSubmit)}>

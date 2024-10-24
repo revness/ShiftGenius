@@ -7,6 +7,7 @@ import UserInfo from "../UserInfo/UserInfoInDashBoard";
 import { AuthContext } from "../../context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { markApproved, deleteShift } from "../../services/shift";
+import { set } from "react-hook-form";
 
 //utility class for conditional rendering of classes
 //rest paramater syntax, collects into array called classes.
@@ -76,6 +77,7 @@ const Calendar = () => {
   const [showShifts, setShowShifts] = useState<boolean>(false);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const selectedDay = calendarDays.find((day: CalendarDay) => day.isSelected);
   const navigate = useNavigate();
 
@@ -218,20 +220,22 @@ const Calendar = () => {
   // Handle shift approval
   const handleApproveShift = (id: string) => async () => {
     try {
+      setError(null);
       await markApproved(id);
       setRefreshTrigger((prev) => prev + 1);
     } catch (error) {
-      console.error("Error approving shift:", error);
+      setError("" + error);
     }
   };
 
   // Handle shift deletion
   const handleDelete = (id: string) => async () => {
     try {
+      setError(null);
       await deleteShift(id);
       setRefreshTrigger((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error deleting shift:", error);
+    } catch (error: String | any) {
+      setError("" + error);
     }
   };
 
@@ -479,6 +483,7 @@ const Calendar = () => {
                 <h2 className="text-base font-semibold">
                   Shifts for {formatDate(new Date(selectedDay.date))}
                 </h2>
+                {error && <div className="text-red-500">{error}</div>}
               </div>
               {selectedDay.shifts.length > 0 ? (
                 <ol className="divide-y divide-gray-100">

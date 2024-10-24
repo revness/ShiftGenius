@@ -25,7 +25,15 @@ public class TimesheetService {
     private UserRepository UserRepository;
 
     public Timesheet createTimesheet(@Valid CreateTimesheetDTO data) throws Exception {
-        User user = UserRepository.findById(data.getUserId()).orElseThrow(() -> new Exception("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        User user = UserRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can create timesheets");
+        }
+        User userID = UserRepository.findById(data.getUserId()).orElseThrow(() -> new Exception("User not found"));
 
         Timesheet timesheet = new Timesheet();
         timesheet.setDate(data.getDate());
@@ -34,7 +42,7 @@ public class TimesheetService {
         timesheet.setBreakTime(data.getBreakTime());
         timesheet.setDescription(data.getDescription());
         timesheet.setApproved(false);
-        timesheet.setUser(user);
+        timesheet.setUser(userID);
         return timesheetRepository.save(timesheet);
     }
 
@@ -73,19 +81,20 @@ public class TimesheetService {
         return timesheetRepository.save(timesheet);
     }
 
-    public void deleteTimesheet(Long id) {
+    public void deleteTimesheet(Long id) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         User user = UserRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (user.getRole() != Role.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can approve timesheets");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can delete timesheets");
         }
         timesheetRepository.deleteById(id);
     }
 
     public Timesheet approveTimesheet(Long id) throws Exception {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         User user = UserRepository.findByEmail(userEmail)

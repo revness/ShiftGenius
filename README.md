@@ -78,4 +78,5 @@ Team member : Chapman, Jenny
 
 # Todo
 
-- Change to color icons or images for tech stack
+- addshift- can select user with dropdown (populates data)
+- role attach to JWT so we know what role the user is.

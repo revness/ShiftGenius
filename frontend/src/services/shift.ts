@@ -110,8 +110,14 @@ export const postTimeSheet = async (data: any) => {
     });
     console.log("postTimeSheet", response.data);
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to post timesheet");
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response);
+      throw new Error(error.response.data);
+    } else {
+      console.log(error);
+      throw new Error("Failed to post timesheet");
+    }
   }
 };
 export const markApproved = async (id: string) => {
@@ -127,10 +133,15 @@ export const markApproved = async (id: string) => {
         },
       }
     );
-    console.log("markApproved", response.data);
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to mark approved");
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response);
+      throw new Error(error.response.data);
+    } else {
+      console.log(error);
+      throw new Error("Failed to delete timesheet");
+    }
   }
 };
 
@@ -143,9 +154,14 @@ export const deleteShift = async (id: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("deleteShift", response.data);
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to delete shift");
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response);
+      throw new Error(error.response.data);
+    } else {
+      console.log(error);
+      throw new Error("Failed to delete timesheet");
+    }
   }
 };
