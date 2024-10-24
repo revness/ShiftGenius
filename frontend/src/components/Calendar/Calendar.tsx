@@ -236,7 +236,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="">
+    <div className="mx-auto max-w-7xl">
       <div className="lg:flex lg:h-full lg:flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
           <h1 className="text-base font-semibold leading-6 text-gray-900">
@@ -246,7 +246,7 @@ const Calendar = () => {
                 currentDate.getFullYear()}
             </time>
           </h1>
-          <UserInfo />
+          {isAuthenticated && <UserInfo />}
           <div className="flex items-center">
             <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch md:ml-4">
               <button
