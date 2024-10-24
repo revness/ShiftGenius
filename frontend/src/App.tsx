@@ -8,12 +8,12 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 
 import UserContextProvider from "./context/UserContextProvider";
 import PositionContextProvider from "./context/ProfileUserProvider";
-import ProfileForm from "./pages/Profile/profileForm";
 import { AuthContextProvider } from "./context/AuthContextProvider";
+import ProfileForm from "./pages/Profile/ProfileForm";
 
 function App() {
   return (
-    <div className="mx-auto max-w-7xl ">
+    <div className="mx-auto">
       <BrowserRouter>
         <AuthContextProvider>
           <PositionContextProvider>

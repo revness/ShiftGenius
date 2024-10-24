@@ -51,7 +51,7 @@ const SignIn = () => {
           email: res.email,
         });
         setIsAuthenticated(true);
-        navigate("/dashboard");
+        navigate("/");
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);
