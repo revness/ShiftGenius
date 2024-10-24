@@ -70,11 +70,19 @@ Team member : Chapman, Jenny
   - adds logic to retrieve shifts and add to calendar object
 
 - 22-10-24
-  - chapman update???
+
+  - calendar dates feature update
+  - shift display on dashboard
+
+- 23-10-24
+
+  - Update localStorage to ensure the user data don't get lost when page get freshed
+  - set up authentication and authorization for user to access certain pages or features.
+  - update the app logo
+
 - 24-10-24
-- Update localStorage to ensure the user data don't get lost when page get freshed
-- set up authentication and authorization for user to access certain pages or features.
-- update the app logo
+  - Home page UI
+  - shift status and error message feature
 
 # Todo
 

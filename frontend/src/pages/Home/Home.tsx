@@ -20,7 +20,7 @@ const Home = () => {
   };
   return (
     <>
-      <div className="flex flex-col items-center px-20 pb-20 pt-12 font-cambria">
+      <div className="flex flex-col items-center px-20 pb-20 pt-10 font-cambria">
         <h1 className="text-4xl font-bold text-center">
           Manage Your Work Roster with ShiftGenius
         </h1>
@@ -29,13 +29,13 @@ const Home = () => {
         </h4>
         {!isAuthenticated ? (
           <button
-            className="w-1/5 p-3 mt-6 bg-indigo-600 text-white rounded-md hover:bg-pink-600"
+            className="w-1/5 p-3 mt-4 bg-indigo-600 text-white rounded-md hover:bg-pink-600"
             onClick={handleNavigationToSignIn}
           >
             Sign In
           </button>
         ) : (
-          <div className=" p-6 mt-8"></div>
+          <div className=" p-4 mt-2"></div>
         )}
 
         {/* Cards container */}
